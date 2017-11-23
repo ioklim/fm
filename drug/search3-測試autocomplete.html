@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="搜尋健保與食藥署藥品品項內容">
+	<meta name='og:image' content='searchicon.png' />
+    <meta name="author" content="Yulin Huang">
+    <link rel="icon" href="favicon.ico">
+	<link rel="apple-touch-icon" href="searchicon.png">
+
+    <title>全國藥品查詢</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <link href="css/ie10-viewport-bug-workaround.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="css/starter-template.css?ver=3" rel="stylesheet">
+
+    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
+    <!--[if lt IE 9]><script src="js/ie8-responsive-file-warning.js"></script><![endif]-->
+    <script src="js/ie-emulation-modes-warning.js"></script>
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+	<link href="css/jquery.autocomplete.css" rel="stylesheet">
+        <style type="text/css">
+            /* Sticky footer styles
+-------------------------------------------------- */
+
+html,
+body {
+  height: 100%;
+  /* The html and body elements cannot have any padding or margin. */
+}
+
+/* Wrapper for page content to push down footer */
+#wrap {
+  min-height: 100%;
+  height: auto !important;
+  height: 100%;
+  /* Negative indent footer by its height */
+  margin: 0 auto -60px;
+  /* Pad bottom by footer height */
+  padding: 0 0 60px;
+}
+
+/* Set the fixed height of the footer here */
+#footer {
+  height: 60px;
+  background-color: #f5f5f5;
+}
+
+
+/* Custom page CSS
+-------------------------------------------------- */
+/* Not required for template or sticky footer method. */
+
+#wrap > .container {
+  padding: 60px 15px 0;
+}
+.container .credit {
+  margin: 20px 0;
+}
+
+#footer > .container {
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+code {
+  font-size: 80%;
+}
+.navbar-form {
+    overflow: auto;
+}
+.navbar-form .form-control {
+    display: inline-block;
+    width: 100%; 
+    vertical-align: middle;
+}
+.navbar-form .form-group {
+    display: inline;
+}
+body{font-family: 微軟正黑體,Arial,Helvetica,sans-serif;}
+.drugDiv{
+	border-radius: 10px 10px 10px 10px;
+	-moz-border-radius: 10px 10px 10px 10px;
+	-webkit-border-radius: 10px 10px 10px 10px;
+	border: 1px solid #858585;
+	padding:10px;
+	max-width:415px;
+	display:inline-block;
+	margin:10px;
+}
+.expired{
+background-color: #cdcdcd;
+    border: 1px dashed #747474;
+    color: #828282;
+}
+.maxdate{
+	background-color: #efefef;
+}
+.table>tbody>tr>td,
+.table>tfoot>tr>td{
+    border-top: 0px;
+	padding:0px 8px;
+	max-width:100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+	display: block;
+}
+.table>thead>tr>th{
+	padding:0px 8px;
+	max-width:100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+	display: block;
+}
+.table{
+	table-layout:fixed;
+}
+.linkicon{
+	font-size: 18px;
+}
+
+.btn{
+	padding:3px 6px;
+}
+table.tftable {font-size:12px;color:#333333;border-width: 1px;border-color: #a6b8f8;border-collapse: collapse;}
+table.tftable th {font-size:12px;background-color:#e2e4f8;border-width: 1px;padding: 8px;border-style: solid;border-color: #a6b8f8;text-align:left;}
+table.tftable tr {background-color:#ffffff;}
+table.tftable td {font-size:12px;border-width: 1px;padding: 8px;border-style: solid;border-color: #a6b8f8;white-space:nowrap;}
+@media (min-width: 1px) {
+  .navbar-toggle {
+    display: none;
+  }
+}
+.dbInfo{
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+	border: 2px solid #8cd9ff;
+	background-color:#ffffff;
+    padding: 20px;
+    max-width: 500px;
+    margin: auto;
+}
+.searching {
+	position:fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+.lh1{
+	line-height:1;
+}
+.tooltiptext {
+	display:none;
+    width: 120px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+    position: absolute;
+    z-index: 1050;
+    left: 50%;
+    margin-left: -60px;
+}
+.arrowBottom{
+    top: 100%; /* At the bottom of the tooltip */
+    left: 50%;
+	border-color: black transparent transparent transparent;
+	position: absolute;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+}
+.arrowTop{
+	bottom: 100%;  /* At the top of the tooltip */
+    left: 50%;
+	border-color: transparent transparent black transparent;
+	position: absolute;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+}
+.arrowLeft{
+    top: 35%;
+    right: 100%; /* To the left of the tooltip */
+	border-color: transparent black transparent transparent;
+	position: absolute;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+}
+.arrowRight{
+    top: 35%;
+    left: 104%; /* To the right of the tooltip */
+	border-color: transparent transparent transparent black;
+	position: absolute;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+}
+        </style>
+  </head>
+
+  <body>
+<!-- Wrap all page content here -->
+<div id="wrap">
+  
+  <!-- Fixed navbar -->
+  <div class="navbar navbar-default navbar-fixed-top">
+    <div class="container my-top-container">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <ul class="nav navbar-nav">
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span id="aDropdown">食藥署資料庫</span> <b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                    <li><a href="#">健保藥品</a></li>
+                    <li><a href="#" class="active">食藥署資料庫</a></li>
+                    <!-- <li><a href="#">藥品外觀</a></li>
+                    <li><a href="#">健康食品</a></li>
+                    <li><a href="#">含藥化妝品</a></li> -->
+                </ul>
+            </li>
+        </ul>
+	  </div>
+	  <div class="navbar-header">
+        <form class="navbar-form" role="search" id="formSearch" action="this.submit();">
+                <div class="input-group">
+                    <input type="text" class="form-control h28" placeholder="藥名、許可證號、關鍵字、適應症" name="q" id="txtQ" onchange="autocom();" onkeyup="autocom();">
+                    <div class="input-group-btn">
+                        <button class="btn btn-default" type="submit"><i class="glyphicon glyphicon-search"></i></button>
+                    </div>
+                </div>
+				搜尋結果以
+				<div class="btn-group" data-toggle="buttons">
+				  <label class="btn btn-default active lh1">
+					<input type="radio" name="optShow" id="option1" autocomplete="off" value="c" checked> 精簡
+				  </label>
+				  <label class="btn btn-default lh1">
+					<input type="radio" name="optShow" id="option2" autocomplete="off" value="t"> 全表格
+				  </label>
+				</div>
+				表示,
+				<div class="btn-group" data-toggle="buttons">
+				  <label class="btn btn-default active lh1">
+					<input type="radio" name="optExp" id="optExp1" autocomplete="off" value="wi" checked> 包含
+				  </label>
+				  <label class="btn btn-default lh1">
+					<input type="radio" name="optExp" id="optExp2" autocomplete="off" value="wo"> 不含
+				  </label>
+				</div>
+				過期資料
+         </form>
+      </div>
+      
+    </div>
+  </div>
+  
+  <!-- Begin page content -->
+  <div class="container">
+  
+<span id="spProgress" style="color:blue;"></span>
+<span id="spSummary" ></span>
+<span id="spResult" >
+<br><br>
+
+<div class="dbInfo">
+  <center><h3 style="margin: 10px;color: #3f62a5;">全國藥品查詢服務<span class="glyphicon glyphicon-search" aria-hidden="true"></span></h3></center>
+  <hr>
+  <p style="color: #2323f3;"><big>輸入要尋找的藥名、許可證號、劑型、劑量、適應症等關鍵字，即可找到藥品資料。多個搜尋關鍵字請以空格分開。</big></p>
+  <center><button onclick="animateHint();" class="btn btn-primary">演示操作說明</button></center>
+  <p><big>目前收錄的資料庫：</big></p>
+  <p><big>健保用藥品項</big>&nbsp;<a href="http://www.nhi.gov.tw/query/query1.aspx" target="_blank"><span class="glyphicon glyphicon-link" aria-hidden="true"></span></a><br>
+  &nbsp;&nbsp;168,879筆&nbsp;<a href="https://www.nhi.gov.tw/Content_List.aspx?n=238507DCFE832EAE&topn=3FC7D09599D25979" target="_blank"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span></a>；2017年6月23日更新<br>
+  </p>
+  <p><big>食藥署西藥許可證</big>&nbsp;<a href="https://www.fda.gov.tw/mlms/H0001.aspx" target="_blank"><span class="glyphicon glyphicon-link" aria-hidden="true"></span></a><br>
+  &nbsp;&nbsp;65,716筆&nbsp;<a href="http://data.fda.gov.tw/frontsite/data/DataAction.do?method=doDetail&infoId=36" target="_blank"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span></a>；2017年6月20日更新<br>
+  
+  </p>
+</div>
+<br>
+
+<br>
+</span>
+<!-- <span id="spLoader" ></span> -->
+
+  </div>
+</div>
+
+<div id="footer">
+  <div class="container">
+    <p class="text-muted credit">本搜尋網由黃昱霖醫師開發維護</a>.</p>
+  </div>
+</div>
+<div id="divHint" class="tooltiptext"><span id="hintText">Help</span><span id="hintArrow"></span></div>
+        
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')</script>
+    <script src="js/bootstrap.min.js"></script>
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script src="js/ie10-viewport-bug-workaround.js"></script>
+	<script src="js/jquery.autocomplete.min.js"></script>
+<script type='text/javascript'>
+function autocom(){
+	var url = "autocom.php?q="+$("#txtQ").val();
+	$("#txtQ").autocomplete(url);  
+}
+function animateHint(){
+	var p1 = $("#aDropdown").offset();
+	var p2 = $("#option1").offset();
+	var p3 = $("#optExp1").offset();
+	var p4 = $("#txtQ").offset();
+	//alert(p1.top+"-"+p1.left);
+	showHint("1.選擇資料庫",p1.top+25,p1.left+66,"Top");
+	$("#divHint").fadeIn("slow").delay(1000).fadeOut("slow",function(){
+		//alert(p2.top+"-"+p2.left);
+		showHint("2.設定結果顯示方式",p2.top+25,p2.left+36,"Top");
+		$("#divHint").fadeIn("slow").delay(1000).fadeOut("slow",function(){
+			showHint("3.是否包含過期資料",p3.top+25,p3.left+36,"Top");
+			$("#divHint").fadeIn("slow").delay(1000).fadeOut("slow",function(){
+				showHint("4.輸入關鍵字開始查詢",p4.top+25,p4.left+36,"Top");
+				$("#divHint").fadeIn("slow").delay(1000).fadeOut("slow");
+			});
+		});
+	});
+}
+function showHint(strHint,top,left,arrow){
+	$("#divHint").css("top",top+"px");
+	$("#divHint").css("left",left+"px");
+	$("#hintText").html(strHint);
+	$("#hintArrow").attr("class","arrow"+arrow);
+}
+$( document ).ready(function() {
+	/*
+	for(i=0;i<3;i++){
+		$("#drugeg").after(document.getElementById("drugeg").outerHTML);
+	}
+	*/
+	$('[data-toggle="tooltip"]').tooltip(); 
+});
+
+$("li>a").click(function() { //選擇不同資料庫
+  $("#aDropdown").html($(this).text());
+});
+var prog = 0;
+var start, end;
+var steptwo = 0; //1:健保,2:FDA
+
+$( "#formSearch" ).submit(function( event ) {
+	var dbName = $("#aDropdown").text();
+	var keyword = $("#txtQ").val();
+	var output = $('input[name=optShow]:checked', '#formSearch').val();
+	var expire = $('input[name=optExp]:checked', '#formSearch').val();
+	//alert(dbName+"-"+keyword+"-"+way);
+	switch(dbName) {
+		case "健保藥品":
+			startsearchgrep('all1',3,output,"nhi",expire);
+			steptwo=1;
+			break;
+		case "食藥署資料庫":
+			startsearchgrep('36_2',0,output,"fda",expire);
+			steptwo=2;
+			break;
+		default:
+			startsearchgrep('36_2',0,output,"fda",expire);
+			steptwo=2;
+	}
+	event.preventDefault();
+});
+
+function starting(){
+	//$("#spLoader").html("<br><center><img src='ajax-loader.gif'></center>");
+	start = new Date().getTime();
+	$("#spProgress").html("開始搜尋資料庫...").show();
+	prog = 0;
+	$("button").attr("disabled", true);
+	$("#spSummary").html("");
+	$("#spResult").show();
+	$("#divSearching").show();
+}
+function ending(msg){
+	//$("#spLoader").html("");
+	end = new Date().getTime();
+	var time = Math.round((end - start)*100/1000)/100;
+	if(msg=="") msg= "搜尋完畢, 耗時"+time+"秒";
+	$("#spProgress").html(msg).delay(2000).fadeOut(500);
+	$("button").attr("disabled", false);
+	var rowCount;
+	var output = $('input[name=optShow]:checked', '#formSearch').val()
+	if(output=="t")
+		rowCount = $('#tbResult tr').length-1;
+	else
+		rowCount = $('#spResult div').length;
+	if(rowCount<1) {
+		$("#spResult").hide();
+		$("#spSummary").html("抱歉，找不到任何符合的資料");
+	} else if(rowCount>99){
+		$("#spSummary").html("總共找到<span class='redtext'>超過100筆資料</span>，請修改關鍵字，或用空白分開數個關鍵字搜尋<br>");
+		afterending();
+	} else {
+		$("#spSummary").html("總共找到"+(rowCount)+"筆資料<br>");
+		afterending();
+	}
+	$("#divSearching").hide();
+}
+function afterending(){
+	var d = new Date();
+	var yr = d.getFullYear(); 
+	var mo = d.getMonth()+1;
+	var dy = d.getDate();
+	var nExpire, i, aa;
+	var output = $('input[name=optShow]:checked', '#formSearch').val();
+	if(steptwo==1 && output=="t"){
+		var nToday = (yr-1911)*10000 + mo*100 + dy;
+		//console.log(nToday);
+		var r = document.getElementById("tbResult").rows.length;
+		for(i=1;i<r;i++){
+			nExpire = parseInt(document.getElementById("tbResult").rows[i].cells[6].innerHTML,10);
+			if(nExpire<nToday){
+				document.getElementById("tbResult").rows[i].style.backgroundColor = "#e0e0e0";
+				document.getElementById("tbResult").rows[i].style.color = "gray";
+			}
+		}
+		
+	}else if(steptwo==2 && output=="t"){
+		var nToday = (yr-1911)*10000 + mo*100 + dy;
+		var r = document.getElementById("tbResult").rows.length;
+		for(i=1;i<r;i++){
+			aa= document.getElementById("tbResult").rows[i].cells[4].innerHTML.split("-");
+			if(aa.length!=3) continue;
+			nExpire = (parseInt(aa[0],10)-1911)*10000 + parseInt(aa[1],10)*100 + parseInt(aa[2]);
+			if(nExpire<nToday){
+				document.getElementById("tbResult").rows[i].style.backgroundColor = "#e0e0e0";
+				document.getElementById("tbResult").rows[i].style.color = "gray";
+			}
+		}
+	}else if(steptwo==3 && output=="t"){
+		var r = document.getElementById("tbResult").rows.length;
+		var strsrc,strimg;
+		for(i=1;i<r;i++){
+			strsrc = document.getElementById("tbResult").rows[i].cells[11].innerHTML;
+			if(strsrc=="") continue;
+			aa= strsrc.split(";;");
+			strimg="";
+			for(j=0;j<aa.length;j++){
+				strimg += "<a href='"+aa[j]+"' target='_blank'><img src='"+aa[j]+"' height='60px'></a>";
+			}
+			document.getElementById("tbResult").rows[i].cells[11].innerHTML = strimg;
+		}
+	}
+	steptwo=0;
+}
+function startsearchgrep(filename,licenseN,output,database,expire){
+	var strQuery = $("#txtQ").val();
+	if(strQuery==""){
+		alert("關鍵字不可以空白");
+		return 0;
+	}
+	if(output=="t"){
+		$.ajax({
+			url: "data/getdbinfo.php",
+			type:"POST",
+			data: { file: filename
+					},
+			dataType:'json',
+			success: function(response){
+				starting();
+				$("#spResult").html("<table class='tftable' id='tbResult'><thead>"+response["tr"]+"</thead><tbody></tbody></table>");
+				searchgrep(filename,licenseN,output,database,expire);
+			}
+		});
+	}else{
+		starting();
+		$("#spResult").html("");
+		searchgrep(filename,licenseN,output,database,expire);
+	}
+}
+function searchgrep(filename,licenseN,output,database,expire){
+	var strQuery = $("#txtQ").val();
+	$.ajax({
+		url: "http://diy-ioklim.rhcloud.com/search/query.php",
+		type:"POST",
+		data: { querygrep: strQuery,
+				file: filename,
+				license:licenseN,
+				output:output,
+				database:database,
+				expire,expire},
+		dataType:'text',
+		xhrFields: {
+                withCredentials: false
+            },
+		success: function(response){
+			var str = response;
+			if(output=="t"){
+				if(str!="") $('#tbResult > tbody:last-child').append(str);
+			}else{
+				if(str!="") $("#spResult").html(str);
+			}
+			ending("");
+		},
+		error: function (jqXHR, exception) {
+			var msg = '';
+			if (jqXHR.status === 0) {
+				msg = 'Not connect.\n Verify Network.';
+			} else if (jqXHR.status == 404) {
+				msg = 'Requested page not found. [404]';
+			} else if (jqXHR.status == 500) {
+				msg = 'Internal Server Error [500].';
+			} else if (exception === 'parsererror') {
+				msg = 'Requested JSON parse failed.';
+			} else if (exception === 'timeout') {
+				msg = 'Time out error.';
+			} else if (exception === 'abort') {
+				msg = 'Ajax request aborted.';
+			} else {
+				msg = 'Uncaught Error.\n' + jqXHR.responseText;
+			}
+			ending(msg);
+			console.log(jqXHR);
+		}
+	});
+}
+</script>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-101766623-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+<div id="divInfobox" style="width:100%">
+	<div id="divSearching" class="searching" style="display:none;"><img src="loading-balls.svg" onerror="this.src='loading-balls.gif'"></div>
+</div>
+    </body>
+</html>
